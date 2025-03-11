@@ -3,8 +3,9 @@ import PropTypes from "prop-types";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList, Legend } from "recharts";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import * as XLSX from "xlsx"; // Importar la librería XLSX para exportar a Excel
 
-const Tabla = ({ dataProp}) => {
+const Tabla = ({ dataProp }) => {
     const [data, setData] = useState(dataProp || []);
     const [filtros, setFiltros] = useState({
         fecha: "",
@@ -19,18 +20,16 @@ const Tabla = ({ dataProp}) => {
     const [mostrarPromedio, setMostrarPromedio] = useState(false);
 
     useEffect(() => {
-        fetchData();
-        
-    }, []);
-
-    //Función para obtener los datos desde el backend.
+        if (!dataProp) {
+            fetchData();  // Solo obtener los datos si no se pasaron como props
+        }
+    }, [dataProp]);
 
     const fetchData = async () => {
         try {
             const response = await fetch('http://localhost:5000/api/datos');
             const result = await response.json();
             setData(result);  // Actualizamos el estado con los datos recibidos
-            console.log("Datos cargados desde la base de datos:", result)
         } catch (error) {
             console.error("Error al obtener los datos:", error);
         }
@@ -162,6 +161,14 @@ const Tabla = ({ dataProp}) => {
         }
     };
 
+    // Función para exportar los datos a Excel
+    const exportarExcel = () => {
+        const ws = XLSX.utils.json_to_sheet(datosFiltrados);  // Convertir los datos en formato Excel
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Datos");
+        XLSX.writeFile(wb, "datos.xlsx");
+    };
+
     return (
         <div className="tabla-container">
             <table className="tabla">
@@ -256,48 +263,41 @@ const Tabla = ({ dataProp}) => {
 
             {mostrarPromedio && (
                 <div className="grafico-container" id="grafico">
-                    <h3>Gráfico de Tiempo Promedio por Cliente y Mes</h3>
-                    <ResponsiveContainer width="100%" height={300}>
+                    <h3>Gráfico de Tiempo Promedio por Cliente</h3>
+                    <ResponsiveContainer width="100%" height={400}>
                         <BarChart data={dataForChart}>
                             <XAxis dataKey="mes" />
                             <YAxis />
                             <Tooltip />
                             <Legend />
-                            {Object.keys(dataForChart[0]).map((key, index) => key !== 'mes' && (
-                                <Bar key={index} dataKey={key} name={key} fill={asignarColorCliente(key, index)}>
-                                    <LabelList dataKey={key} position="top" fill="#000" />
-                                </Bar>
-                            ))}
+                            {Object.keys(dataForChart[0] || {}).map((key, index) =>
+                                key !== "mes" ? (
+                                    <Bar
+                                        key={key}
+                                        dataKey={key}
+                                        fill={asignarColorCliente(key, index)}
+                                    >
+                                        <LabelList dataKey={key} position="top" />
+                                    </Bar>
+                                ) : null
+                            )}
                         </BarChart>
                     </ResponsiveContainer>
-                    {/* Botón para exportar el gráfico */}
                     <button className="boton-exportar" onClick={exportarPDF}>
-                        Exportar a PDF
+                        Exportar Gráfico a PDF
                     </button>
                 </div>
             )}
+
+            <button className="boton-exportar" onClick={exportarExcel}>
+                Exportar a Excel
+            </button>
         </div>
     );
 };
 
-// Validación de PropTypes
 Tabla.propTypes = {
-    dataProp: PropTypes.arrayOf(
-        PropTypes.shape({
-            id: PropTypes.number.isRequired,
-            fecha: PropTypes.string.isRequired,
-            ruta: PropTypes.string.isRequired,
-            conductor: PropTypes.string.isRequired,
-            matricula: PropTypes.string.isRequired,
-            clientes: PropTypes.string.isRequired,
-            horaEntrada: PropTypes.string.isRequired,
-            horaSalida: PropTypes.string.isRequired,
-        })
-    ),
-};
-
-Tabla.defaultProps = {
-    dataProp: [],
+    dataProp: PropTypes.array
 };
 
 export default Tabla;

@@ -3,104 +3,77 @@ import Formulario from "../components/Formulario";
 import Tabla from "../components/Tabla";
 import Graficos from "../components/Graficos";
 import ExportarImportar from "../components/ExportarImportar";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios"; // Importamos axios
 
-
+// eslint-disable-next-line no-unused-vars
 const Home = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState([]);
-  const [error, setError] = useState("");
+  const [data, setData] = useState([]); // Inicializamos el estado vacío
 
-  //Función para obtener los datos de la API protegida
-  const fetchData = useCallback( async () => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      setError("No estás autenticado. Inicia Sesión");
-      navigate("/Login");
-      return;
-    }
-
+  // Función para obtener los datos desde la base de datos
+  const obtenerDatos = async () => {
     try {
-      const response = await fetch("http://localhost:5000/datos", {
-        method:"GET",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type":"application/json",
-        },
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || "Error al obtener los datos");
-      }
-      setData(data);
-    }catch (error) {
-      setError(error.message);
-    }
-  }, [navigate]);
-
-  useEffect(() => {
-    fetchData();
-  },[fetchData]);
-
-  //Función para agregar datos a la base de datos
-
-  const addData = async (entry) => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      setError("No estás autenticado.Inicia sesión.");
-      return;
-    }
-
-    try {
-      const response = await fetch("http://localhost:5000/datos", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer${token}`,
-          "Content-Type": "application/json",
-        },
-        body:JSON.stringify(entry),
-      });
-      const newData = await response.json();
-
-      if (!response.ok) {
-        throw new Error(newData.error || "Error al guardar datos");
-      }
-      setData([...data, {id: newData.id, ...entry}]); //Agregar un nuevo dato al estado
+      const response = await axios.get("https://controldatarutas.com"); // Reemplaza con la URL de tu API
+      setData(response.data); // Guardamos los datos recibidos en el estado
     } catch (error) {
-      setError(error.message);
+      console.error("Error al obtener los datos:", error);
     }
   };
 
-  //useEffect para cargar los datos al iniciar
+  // Función para guardar los datos modificados en la base de datos
+  const guardarDatos = async (nuevoDato) => {
+    try {
+      await axios.post("https://controldatarutas.com", nuevoDato); // Reemplaza con la URL de tu API
+      setData((prevData) => [...prevData, nuevoDato]); // Agregamos el nuevo dato al estado
+    } catch (error) {
+      console.error("Error al guardar los datos:", error);
+    }
+  };
+
+  // Función para eliminar una fila
+  const eliminarFila = async (id) => {
+    try {
+      await axios.delete(`https://controldatarutas.com/${id}`); // Reemplaza con la URL de tu API
+      setData(data.filter((item) => item.id !== id)); // Eliminamos el dato del estado
+    } catch (error) {
+      console.error("Error al eliminar los datos:", error);
+    }
+  };
+
+  // Llamamos a obtenerDatos al montar el componente
   useEffect(() => {
-    fetchData();
+    obtenerDatos();
   }, []);
 
-  //Función para cerrar sesión
+  // Función para cerrar sesión
   const handleLogout = () => {
-    localStorage.removeItem("token"); //Eliminamos el token
-    navigate("/Login")
+    localStorage.removeItem("username");
+    localStorage.removeItem("password");
+    navigate("/");
   };
 
   return (
     <div className="container">
       <aside className="sidebar">
-        <Formulario onSubmit={addData} />
+        <Formulario
+          onSubmit={(entry) => {
+            const nuevoDato = { id: Date.now(), ...entry }; // Creamos un nuevo dato
+            guardarDatos(nuevoDato); // Guardamos el dato en la base de datos
+          }}
+        />
       </aside>
       <main className="content">
-        {error && <p style ={{color:"red"}}>error</p>}
-        {/* Solo el componente ExportarImportar debajo de la tabla */}
+        {/* Tabla con los datos */}
         <div className="tabla-container">
-          <Tabla data={data} eliminarFila={(id) => setData(data.filter((item) => item.id !== id))} />
+          <Tabla data={data} eliminarFila={eliminarFila} />
           <ExportarImportar data={data} setData={setData} />
         </div>
 
-        {/* Componente de gráficos */}
+        {/* Gráficos */}
         <Graficos data={data} />
 
-        {/* Botón para cerrar sesión */}
+        {/* Botón de cierre de sesión */}
         <button className="logout-button" onClick={handleLogout}>
           Cerrar sesión
         </button>

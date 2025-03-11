@@ -1,32 +1,30 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import { jsPDF } from "jspdf";
+import axios from "axios";
 import PropTypes from "prop-types";
 
 // Registrar los componentes de Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const Graficos = () => {
+    // Estado para los datos
     const [data, setData] = useState([]);
-    // Estado para el filtro de mes
     const [filtroMes, setFiltroMes] = useState("");
 
-    //Obtenemos los datos desde la base de datos al cargar el componente
+    // Efecto para obtener los datos de la base de datos
     useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get("https://tu-api.com/datos"); // Reemplaza con la URL correcta
+                setData(response.data);
+            } catch (error) {
+                console.error("Error al obtener los datos:", error);
+            }
+        };
         fetchData();
-    }, []);
-
-    const fetchData = async () => {
-        try {
-            const response = await fetch("http://localhost:5000/api/dadtos");
-            const result = await response.json();
-            setData(result);
-            console.log("Datos cargados desde la base de datos: ", result);
-        } catch (error) {
-            console.error("Error al obtener los datos:", error);
-        }
-    };
+    }, []); // El array vacío [] asegura que solo se ejecute al montar el componente
 
     // Función para calcular el tiempo promedio por cliente
     const calcularTiempoPromedioPorCliente = () => {
@@ -127,7 +125,7 @@ const Graficos = () => {
 
             {/* Gráfico de Clientes más Rentables */}
             <div className="grafico">
-                <h3>Clientes</h3>
+                <h3>Clientes más Rentables</h3>
                 <Bar
                     id="cliente-graph"
                     data={{
@@ -162,7 +160,7 @@ const Graficos = () => {
 
             {/* Gráfico de Conductores más Rentables */}
             <div className="grafico">
-                <h3>Conductores</h3>
+                <h3>Conductores más Rentables</h3>
                 <Bar
                     id="conductor-graph"
                     data={{

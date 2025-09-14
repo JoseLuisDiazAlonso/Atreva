@@ -1,0 +1,76 @@
+/* Estilo global para el contenedor */
+.contenedor {
+  min-height: 100vh;
+  width: 90vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Centra todos los elementos horizontalmente */
+  justify-content: flex-start;
+  /* Comienza desde arriba */
+  padding: 20px;
+  gap: 10px;
+  /* Espacio entre los bloques */
+  width: 100%;
+  /* Asegura que ocupe el 100% del ancho */
+  box-sizing: border-box;
+  /* Para que el padding no afecte el ancho */
+}
+
+/* Limitar el ancho de cada componente (Formulario, Grafico, Tabla) */
+.contenedor>* {
+  width: 90vw;
+  box-sizing: border-box;
+  margin: 0 auto;
+  /* Centra los componentes */
+}
+
+.datos {
+  margin-top: 20px;
+}
+
+/* Centrar los títulos dentro de los componentes */
+.contenedor h1,
+.contenedor h2,
+.contenedor h3,
+.contenedor h4,
+.contenedor h5,
+.contenedor h6 {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+/* Estilos para pantallas pequeñas (móviles) */
+@media (max-width: 600px) {
+  .contenedor {
+    padding: 10px;
+    /* Menos padding en pantallas pequeñas */
+  }
+
+  .contenedor>* {
+    width: 90vw;
+    /* Para que los componentes ocupen todo el ancho en móviles */
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    /* Ajustar tamaño de fuente en móviles */
+  }
+
+  /* Estilo adicional para las tablas si es necesario */
+  .tabla {
+    font-size: 14px;
+  }
+}
+
+/* Estilos para pantallas medianas (tabletas) */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .contenedor {
+    padding: 15px;
+  }
+
+  .contenedor>* {
+    width: 90vw;
+    /* Reduce el max-width en tabletas */
+  }
+}

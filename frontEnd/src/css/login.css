@@ -1,0 +1,174 @@
+/*Estilo de toda la página*/
+.container {
+    height: 100vh;
+    background-color: rgb(161, 255, 161);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/*Estilo del div del formulario*/
+
+.formulario {
+    width: 80vw;
+    max-width: 500px;
+    padding: 20px;
+    background-color: rgba(247, 246, 246, 0.5);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: auto;
+}
+
+/*Estilo del Logo*/
+
+.logo {
+    width: auto;
+    height: 150px;
+    border-radius: 20%;
+    object-fit: cover;
+    border: 4px solid #ccc;
+}
+
+/*Estilo de los inputs*/
+
+.input {
+    padding: 12px;
+    border-radius: 16px;
+    border: 1px solid #ccc;
+    margin-top: 20px;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+    outline: none;
+    /*Elimina el borde azul al hacer click*/
+    transition: box-shadow 0.3s ease-in-out;
+    /*Efecto suave*/
+}
+
+.input:focus {
+    box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.3);
+    border-color: #007bff;
+    /*Cambia el borde al hacer click*/
+}
+
+/*Estilos del botón*/
+
+.boton {
+    width: 10vw;
+    margin-top: 20px;
+    background-color: rgb(116, 197, 116);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+.boton:hover {
+    transform: scale(1.1); /*Aumenta el tamaño un 10%*/
+}
+
+/* === ESTILOS GENERALES === */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #c7fbc3;
+}
+
+/* Contenedor principal */
+.container {
+    display: flex;
+    height: 100vh;
+    overflow-x: hidden; /* Evitar desplazamiento horizontal */
+}
+
+/* Sidebar - Formulario */
+.sidebar {
+    width: 25%;
+    min-width: 280px;
+    background-color: #c7f6e1; /* Color de fondo del sidebar */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto;
+}
+
+/* Estilo del formulario */
+form {
+    width: 100%;
+    background-color: #42de8d;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 2px solid #2d6a4f; /* Borde verde */
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+input[type="date"],
+input[type="time"] {
+    background-color: #f0f0f0; /* Color de fondo para inputs de fecha y hora */
+}
+
+button[type="submit"] {
+    background-color: #2d6a4f; /* Color de fondo para el botón de agregar */
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+}
+
+button[type="submit"]:hover {
+    background-color: #1d4d39; /* Color de fondo al pasar el ratón */
+}
+
+button {
+    background-color: #d90429;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover {
+    background-color: #9b031e; /* Fondo más oscuro al pasar el ratón */
+}
+
+/* 🔹 PARA PANTALLAS MUY PEQUEÑAS (MÓVILES) */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        height: auto;
+    }
+    .formulario {
+        margin-top: 210px;
+        margin-bottom: 235px;
+    }
+
+    .boton {
+        width: 70vw;
+    }
+
+   
+}

@@ -30,7 +30,7 @@ Sigue estos pasos para clonar y ejecutar el proyecto en tu máquina local:
 
 **1.Clonar el repositorio**
 
-git clone https://github.com/tu-usuario/tu-repositorio.git
+git clone https://github.com/JoseLuisDiazAlonso/Atreva.git
 cd tu-repositorio
 
 
